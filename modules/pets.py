@@ -137,7 +137,7 @@ class Pets(ModuleBase):
                 arg.remove("--owner")
                 arg.remove(nick)
             except IndexError:
-                return "Please specify owner."
+                pass
 
         if not arg:
             return self.get_default_pet(nick)
@@ -299,15 +299,12 @@ class Pets(ModuleBase):
         return stats
 
     def feed(self, arg, nick, private):
-        pet = self.process_pet_query(arg, nick)
+        pet = self.process_pet_query(arg[:-1], nick)
         if not pet:
             return "No pet found."
         message = "Pet info"
         if arg[-1] not in ["snack", "meal", "feast"]:
             return "Usage: !feed <number/name> snack|meal|feast"
-        pet = self.get_pet(arg[:-1], nick)
-        if not pet:
-            return "No pet found."
         if pet['level'] == 0:
             return "You cannot feed eggs."
 

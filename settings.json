@@ -1,0 +1,13 @@
+{
+    "nick": "kentpet",
+    "server": "irc.freenode.net",
+    "channel": "#kentpet",
+    "ident": {
+        "nickserv": "nickserv",
+        "password": "password"
+    },
+    "mongo": {
+        "server": "localhost",
+        "port": 27017
+    }
+}

@@ -28,8 +28,6 @@ class Pets(ModuleBase):
         return self.messages
 
     def process_pets(self):
-        to_kill = []
-
         for pet in self.db.pets.find():
             owner = self.db.owners.find_one({"pets": ObjectId(pet["_id"])})
             update_fields = {}

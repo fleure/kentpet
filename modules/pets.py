@@ -191,22 +191,6 @@ class Pets(ModuleBase):
             message += " // %s: %s" % (stat, stats[stat])
         return message
 
-    def get_name(self, nick):
-        name = self.get_pet_data(nick, "name")
-        if name == 0:
-            return None
-        else:
-            return name
-
-
-    def get_level(self, petdata):
-        return self.get_pet_data(petdata, "level")
-
-
-    def get_hp(self, petdata):
-        return self.get_pet_data(petdata, "hp")
-
-
     def get_hunger(self, pet):
         food = pet['food']
         string = ""
@@ -227,9 +211,6 @@ class Pets(ModuleBase):
         else:
             string = "Bloated"
         return string
-
-    def get_growth(self, petdata):
-        return self.get_pet_data(petdata, "growth")
 
     def evolve_pet(self, pet):
         # Egg hatch

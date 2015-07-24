@@ -10,9 +10,6 @@ class Admin(ModuleBase):
         super(Admin, self).__init__(core, db)
         return
 
-    def tick(self):
-        return
-
     def adminlogin(self, args, nick, private):
         if not private:
             return

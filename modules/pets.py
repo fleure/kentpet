@@ -164,7 +164,7 @@ class Pets(ModuleBase):
         hp = pet['hp']
         if hp > 0:
             message += " // HP: %s" % hp
-        food = self.get_hunger(pet)
+        food = self.get_hunger(pet["food"])
         if food >= 0:
             message += " // Food: %s" % food
         return message
@@ -189,8 +189,7 @@ class Pets(ModuleBase):
             message += " // %s: %s" % (stat, stats[stat])
         return message
 
-    def get_hunger(self, pet):
-        food = pet['food']
+    def get_hunger(self, food):
         string = ""
         if food < 0:
             return -1
@@ -302,7 +301,7 @@ class Pets(ModuleBase):
             if new_food > self.MAX_FOOD:
                 new_food = self.MAX_FOOD
             self.db.pets.update(pet, { "$set": { "food": new_food } })
-            status = self.get_hunger(pet).lower()
+            status = self.get_hunger(new_food).lower()
             return "You fed your pet. They are now %s" % status
         else:
             return

@@ -288,7 +288,7 @@ class Pets(ModuleBase):
 
         amount = 10.0
         if arg:
-            amount_string = arg[1].lower()
+            amount_string = arg[-1].lower()
             if amount_string == "meal":
                 amount = 25.0
             elif amount_string == "feast":

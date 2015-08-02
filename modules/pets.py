@@ -8,7 +8,7 @@ class Pets(ModuleBase):
 
 
     # Commands the module has.
-    commands = ["kill", "petinfo", "petstats", "newegg", "feed", "namepet", "defaultpet"]
+    commands = ["kill", "petinfo", "petstats", "newegg", "feed", "namepet", "defaultpet", "vacation"]
 
     MAX_FOOD = 100
     TICK_EVERY = 60
@@ -30,6 +30,8 @@ class Pets(ModuleBase):
     def process_pets(self):
         for pet in self.db.pets.find():
             owner = self.db.owners.find_one({"pets": ObjectId(pet["_id"])})
+            if self.check_owner_vacation(owner["_id"]):
+                continue
             update_fields = {}
             update_fields['growth'] = pet['growth'] + 1
             if(pet['growth'] >= pet['evolve']):
@@ -53,6 +55,22 @@ class Pets(ModuleBase):
                     return
             self.db.pets.update(pet, { "$set": update_fields } )
 
+    def check_owner_vacation(self, nick):
+        owner = self.db.owners.find_one({"_id": nick})
+        try:
+            return owner["vacation"]
+        except KeyError:
+            self.db.owners.update(owner, { "$set": { "vacation": False } })
+            return False
+
+    def vacation(self, arg, nick, private):
+        if not arg or arg[0] not in ["on", "off"]:
+            return "Usage: !vacation <on/off>"
+        vacation = False
+        if arg[0] == "on":
+            vacation = True
+        self.db.owners.update({"_id": nick}, { "$set": { "vacation": vacation } })
+        return "Vacation mode set."
 
     def kill(self, arg, nick, private):
         if not arg:
@@ -236,6 +254,8 @@ class Pets(ModuleBase):
         self.db.pets.update(pet, { "$set": update_fields })
 
     def newegg(self, arg, nick, private):
+        if self.check_owner_vacation(nick):
+            return "You cannot generate a new egg when on vacation."
         if self.num_pets(nick) >= self.max_pets:
             return "You have reached the maximum number of pets."
 
@@ -277,6 +297,8 @@ class Pets(ModuleBase):
         return stats
 
     def feed(self, arg, nick, private):
+        if self.check_owner_vacation(nick):
+            return "You cannot feed your pet when on vacation."
         pet = self.process_pet_query(arg[:-1], nick)
         if not pet:
             return "No pet found."

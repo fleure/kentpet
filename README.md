@@ -1,6 +1,6 @@
 ##Kentpet
 
-Kentpet is a atrociously written IRC bot pet keeping game, that provides zero value to the human race. It involves caring for and growing pets through a hideous chatroom based interface.
+Kentpet is an atrociously written IRC bot pet keeping game, that provides zero value to the human race. It involves caring for and growing pets through a hideous chatroom based interface.
 
 ##Prerequisites
 

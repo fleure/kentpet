@@ -38,7 +38,8 @@ class Pets(ModuleBase):
                 self.evolve_pet(pet)
             elif(pet['level'] > 0):
                 before_food = pet['food']
-                new_food = self.decay_food(pet)
+                new_food = self.decay_food(before_food, pet['metabolism'])
+                update_fields['food'] = new_food
                 if (new_food < self.MAX_FOOD*0.10) and (before_food >= self.MAX_FOOD*0.10):
                     name = pet['name']
                     if not name:
@@ -48,11 +49,12 @@ class Pets(ModuleBase):
                 if(new_food <= self.MAX_FOOD*0.05):
                     getcontext().prec = 4
                     update_fields['hp'] = float(Decimal(pet['hp']) - Decimal(0.05))
-                if(pet['hp'] <= 0):
-                    self.remove_pet_from_owner(pet, owner)
-                    self.kill_pet(pet)
-                    self.messages[owner["_id"]] = "Your pet has died!"
-                    return
+                    if(update_fields['hp'] <= 0):
+                        self.remove_pet_from_owner(pet, owner)
+                        self.kill_pet(pet)
+                        self.messages[owner["_id"]] = "Your pet has died!"
+                        return
+            print update_fields
             self.db.pets.update(pet, { "$set": update_fields } )
 
     def check_owner_vacation(self, nick):
@@ -95,10 +97,8 @@ class Pets(ModuleBase):
             self.db.owners.update(owner, { "$set": { "default": None } })
         self.db.owners.update(owner, { "$pull": { "pets": ObjectId(pet["_id"]) } })
 
-    def decay_food(self, pet):
-        food = pet['food']
-        food -= (random.random()*pet['food'])/(pet['metabolism']/self.TICK_EVERY)
-        self.db.pets.update(pet, { "$set": { "food": food } })
+    def decay_food(self, food, metabolism):
+        food -= (random.random()*food)/(metabolism/self.TICK_EVERY)
         return food
 
 

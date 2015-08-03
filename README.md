@@ -119,6 +119,12 @@ Beyond that, feel free to implement whatever functionality you want in the modul
 
 All called methods in the module can return a string message to be directed back at the user who called the command. Simply return the String, no need to specify their name. Returning False means nothing will be sent.
 
+Once your module is written, you can put the module name in the default_pets file in the root directory. Note that module file name and class name must match. You can also load modules on the fly with the admin command, but a restart is recommended:
+
+```
+!admin moduleload module
+```
+
 ##Why Mongo?
 
 Mongo gets a lot of flak, but for a small project like this it works nicely. Schema-free and lazy evaluation is all this project really requires, and it is very simple to setup.

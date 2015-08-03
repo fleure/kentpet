@@ -86,13 +86,17 @@ class Admin(ModuleBase):
 
     def genface(self, args, nick, private):
         if not args:
-            return
-        if not self.pet_controller.has_pet(args[0]):
+            return "Usage: !admin genface <owner> <pet id>"
+
+        pet_module = self.core.modules['pets']
+        pet = pet_module.get_pet(args[1], args[0])
+        if not pet:
             return "No pet found."
 
-        faces.set_new_face(args[0])
+        face = faces.generate_face()
+        self.db.pets.update(pet, { "$set": { "face": face } })
 
-        return "Face generated: %s" % faces.get_face(args[0])
+        return "Face generated: %s" % faces.get_face({"face": face})
 
     def moduleload(self, args, nick, private):
         if not self.logged_in(nick):

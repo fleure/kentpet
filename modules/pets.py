@@ -54,7 +54,6 @@ class Pets(ModuleBase):
                         self.kill_pet(pet)
                         self.messages[owner["_id"]] = "Your pet has died!"
                         return
-            print update_fields
             self.db.pets.update(pet, { "$set": update_fields } )
 
     def check_owner_vacation(self, nick):

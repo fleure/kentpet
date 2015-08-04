@@ -80,7 +80,7 @@ If you're tired of using a number/name, you can set the default pet number with
 
 ##Admin
 
-Kentpet comes with an admin module that lets you tweak the game or pets, or be a power hungry abuser of power. You will have to open a mongo shell and add users to the "admins" collection manually, like so:
+Kentpet comes with an admin module that lets you tweak the game or pets, or be a power hungry monster. You will have to open a mongo shell and add users to the "admins" collection manually, like so:
 
 ```
 db.admins.insert({"name": "password"})
@@ -132,3 +132,7 @@ Mongo gets a lot of flak, but for a small project like this it works nicely. Sch
 ##Why "Kentpet"?
 
 Kentpet was created as a simple time waster for a group of friends who attended the University of Kent in Canterbury, UK, and have a borderline unhealthy obsession with creating IRC bot projects for their little home on Freenode.
+
+##Kentpet Stats
+
+A seperate project for a web UI for viewing information for this project is being developed at [kentpetstats].

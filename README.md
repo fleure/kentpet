@@ -136,3 +136,5 @@ Kentpet was created as a simple time waster for a group of friends who attended 
 ##Kentpet Stats
 
 A seperate project for a web UI for viewing information for this project is being developed at [kentpetstats].
+
+[kentpetstats]: https://github.com/stevewest/kentpetstats

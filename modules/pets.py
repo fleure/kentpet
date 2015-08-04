@@ -51,7 +51,7 @@ class Pets(ModuleBase):
                     update_fields['hp'] = float(Decimal(pet['hp']) - Decimal(0.05))
                     if(update_fields['hp'] <= 0):
                         self.remove_pet_from_owner(pet, owner)
-                        self.kill_pet(pet)
+                        self.kill_pet(pet, "Starved to death")
                         self.messages[owner["_id"]] = "Your pet has died!"
                         return
             self.db.pets.update(pet, { "$set": update_fields } )
@@ -81,12 +81,14 @@ class Pets(ModuleBase):
             return "No pet found."
         name = pet['name']
         self.remove_pet_from_owner(pet, nick)
-        self.kill_pet(pet)
+        self.kill_pet(pet, "Killed by {0}.".format(nick))
         if not name:
             name = "your pet"
         return "You murdered %s. You monster." % name
 
-    def kill_pet(self, pet):
+    def kill_pet(self, pet, cause):
+        if cause:
+            pet['death'] = cause
         self.db.graveyard.insert(pet)
         self.db.pets.remove(pet)
 

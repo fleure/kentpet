@@ -8,7 +8,7 @@ class Pets(ModuleBase):
 
 
     # Commands the module has.
-    commands = ["kill", "petinfo", "petstats", "newegg", "feed", "namepet", "defaultpet", "vacation"]
+    commands = ["pethelp", "kill", "petinfo", "petstats", "newegg", "feed", "namepet", "defaultpet", "vacation"]
 
     MAX_FOOD = 100
     TICK_EVERY = 60
@@ -347,3 +347,12 @@ class Pets(ModuleBase):
             
         self.db.pets.update(pet, { "$set": {"name": name} })
         return "Your pet is now called %s." % name
+
+    def pethelp(self, arg, nick, private):
+        commands = []
+        for module, module_object in self.core.modules.iteritems():
+            commands.extend(module_object.commands)
+
+        commands = map(lambda x: "!" + x, commands)
+
+        return "Commands: {0}".format(commands)

@@ -78,6 +78,8 @@ If you're tired of using a number/name, you can set the default pet number with
 !defaultpet number
 ```
 
+Use !pethelp for a full list of all module commands.
+
 ##Admin
 
 Kentpet comes with an admin module that lets you tweak the game or pets, or be a power hungry monster. You will have to open a mongo shell and add users to the "admins" collection manually, like so:

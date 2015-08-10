@@ -2,7 +2,7 @@ import random
 from decimal import Decimal, getcontext
 from bson.objectid import ObjectId
 import lib.faces as faces
-from module import ModuleBase
+from .module import ModuleBase
 
 class Pets(ModuleBase):
 
@@ -44,7 +44,7 @@ class Pets(ModuleBase):
                     name = pet['name']
                     if not name:
                         name = "One of your pets"
-                    self.messages[owner["_id"]] = "%s is starving." % name
+                    self.messages[owner["_id"]] = "{0} is starving.".format(name)
                     pass
                 if(new_food <= self.MAX_FOOD*0.05):
                     getcontext().prec = 4
@@ -84,7 +84,7 @@ class Pets(ModuleBase):
         self.kill_pet(pet, "Killed by {0}.".format(nick))
         if not name:
             name = "your pet"
-        return "You murdered %s. You monster." % name
+        return "You murdered {0}. You monster.".format(name)
 
     def kill_pet(self, pet, cause):
         if cause:
@@ -170,22 +170,22 @@ class Pets(ModuleBase):
 
         face = faces.get_face(pet)
         if face:
-            message += " // %s" % face
+            message += " // {0}".format(face)
 
         name = pet['name']
         if name != None:
-            message += " // %s" % name
+            message += " // {0}".format(name)
         level = pet['level']
         if level == 0:
             message += " // Egg"
         else:
-            message += " // Level %s" % level
+            message += " // Level {0}".format(level)
         hp = pet['hp']
         if hp > 0:
-            message += " // HP: %s" % hp
+            message += " // HP: {0}".format(hp)
         food = self.get_hunger(pet["food"])
-        if food >= 0:
-            message += " // Food: %s" % food
+        if food:
+            message += " // Food: {0}".format(food)
         return message
 
     def petstats(self, arg, nick, private):
@@ -196,22 +196,22 @@ class Pets(ModuleBase):
         message = "Pet stats"
         name = pet['name']
         if name != None:
-            message += " // %s" % name
+            message += " // {0}".format(name)
         level = pet['level']
         if level == 0:
             message += " // Egg"
             return message
         else:
-            message += " // Level %s" % level
+            message += " // Level {0}".format(level)
         stats = pet['stats']
         for stat in stats:
-            message += " // %s: %s" % (stat, stats[stat])
+            message += " // {0}: {1}".format(stat, stats[stat])
         return message
 
     def get_hunger(self, food):
         string = ""
         if food < 0:
-            return -1
+            return None
         elif food <= self.MAX_FOOD*0.05:
             string = "DYING"
         elif food <= self.MAX_FOOD*0.25:
@@ -251,7 +251,7 @@ class Pets(ModuleBase):
             update_fields['hp'] = 100
             update_fields['growth'] = 0
             update_fields['evolve'] = pet['evolve'] * 1.5
-            self.messages[owner["_id"]] = "Your pet has evolved to level %s!" % update_fields['level']
+            self.messages[owner["_id"]] = "Your pet has evolved to level {0}!".format(update_fields['level'])
         self.db.pets.update(pet, { "$set": update_fields })
 
     def newegg(self, arg, nick, private):
@@ -260,7 +260,7 @@ class Pets(ModuleBase):
         if self.num_pets(nick) >= self.max_pets:
             return "You have reached the maximum number of pets."
 
-        print "Generating new egg for %s" % nick
+        print("Generating new egg for {0}".format(nick))
         with open("attributes/colours") as f:
             colours = [line.rstrip() for line in f]
         colour = random.choice(colours)
@@ -284,7 +284,7 @@ class Pets(ModuleBase):
 
         record_id = self.db.pets.insert_one(pet).inserted_id
         self.db.owners.update({ "_id": nick }, { "$push": { "pets": record_id } })
-        return "You have received an egg! Its colour is %s. It will hatch in one hour." % pet['colour']
+        return "You have received an egg! Its colour is {0}. It will hatch in one hour.".format(pet['colour'])
 
     def roll_stats(self):
         pool = self.STAT_POOL
@@ -325,7 +325,7 @@ class Pets(ModuleBase):
                 new_food = self.MAX_FOOD
             self.db.pets.update(pet, { "$set": { "food": new_food } })
             status = self.get_hunger(new_food).lower()
-            return "You fed your pet. They are now %s" % status
+            return "You fed your pet. They are now {0}".format(status)
         else:
             return
 
@@ -348,7 +348,7 @@ class Pets(ModuleBase):
             return "Invalid name."
             
         self.db.pets.update(pet, { "$set": {"name": name} })
-        return "Your pet is now called %s." % name
+        return "Your pet is now called {0}.".format(name)
 
     def pethelp(self, arg, nick, private):
         commands = []

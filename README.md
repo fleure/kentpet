@@ -4,7 +4,7 @@ Kentpet is an atrociously written IRC bot pet keeping game, that provides zero v
 
 ##Prerequisites
 
-* Python 2.7.3
+* Python 3.0
 * Python irc library (https://pypi.python.org/pypi/irc)
 * mongodb 3.0.5
 * PyMongo 3.0.3

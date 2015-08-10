@@ -1,4 +1,4 @@
-from module import ModuleBase
+from .module import ModuleBase
 import lib.faces as faces
 
 class Admin(ModuleBase):
@@ -96,7 +96,7 @@ class Admin(ModuleBase):
         face = faces.generate_face()
         self.db.pets.update(pet, { "$set": { "face": face } })
 
-        return "Face generated: %s" % faces.get_face({"face": face})
+        return "Face generated: {0}".format(faces.get_face({"face": face}))
 
     def moduleload(self, args, nick, private):
         if not self.logged_in(nick):
@@ -105,4 +105,4 @@ class Admin(ModuleBase):
             return "Usage: !admin moduleload <module name>"
 
         self.pet_controller.bot.load_module(args[0])
-        return "Module %s loaded." % args[0]
+        return "Module {0} loaded.".format(args[0])

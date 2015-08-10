@@ -35,8 +35,8 @@ class KentPetBot(ircbot.SingleServerIRCBot):
             
 
     def load_module(self, module):
-        print "Loading module %s" % module
-        load = __import__("modules.%s" % module, fromlist=[module.capitalize()])
+        print("Loading module {0}".format(module))
+        load = __import__("modules.{0}".format(module), fromlist=[module.capitalize()])
         if module in self.modules:
             load = reload(load)
         self.modules[module] = getattr(load, module.capitalize())(self, self.mongo['kentpet'])
@@ -64,11 +64,11 @@ class KentPetBot(ircbot.SingleServerIRCBot):
 
     def on_welcome(self, c, e):
         if self.ident:
-            print "Identifying with nickserv..."
-            c.privmsg(self.ident['nickserv'], "identify %s" % self.ident['password'])
-            print "Waiting 10 seconds to confim identification..."
+            print("Identifying with nickserv...")
+            c.privmsg(self.ident['nickserv'], "identify {0}".format(self.ident['password']))
+            print("Waiting 10 seconds to confim identification...")
             time.sleep(10)
-        print "Joining channel..."
+        print("Joining channel...")
         c.join(self.channel)
         self.client = c
         thr = threading.Thread(target=self.tick)
@@ -104,17 +104,17 @@ class KentPetBot(ircbot.SingleServerIRCBot):
             message = getattr(self.modules[module], arg[0])(arg[1:], nick, private)
             if message:
                 self.send_message(nick, message, private)
-        except Exception, err:
+        except Exception as err:
             print(traceback.format_exc())
 
     def send_message(self, nick, msg, private):
         if nick == 0:
-            self.client.privmsg(self.channel, "%s" % msg)
+            self.client.privmsg(self.channel, msg)
             return
         if private:
-            self.client.privmsg(nick, "%s: %s" % (nick, msg))
+            self.client.privmsg(nick, "{0}: {1}".format(nick, msg))
         else:
-            self.client.privmsg(self.channel, "%s: %s" % (nick, msg))
+            self.client.privmsg(self.channel, "{0}: {1}".format(nick, msg))
 
     def get_owner(self, owner):
         return self.mongo['kentpet'].owners.find_one({"_id": owner, "server": self.server})
@@ -130,7 +130,7 @@ def main():
     
     db_server = settings['mongo']['server']
     db_port = settings['mongo']['port']
-    print "Connection to MongoDB server..."
+    print("Connection to MongoDB server...")
     client = MongoClient(db_server, db_port)
     try:
         client.server_info()

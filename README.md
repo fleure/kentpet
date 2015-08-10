@@ -56,7 +56,7 @@ Once it has hatched, you will need to feed it to keep it alive.
 !feed 1 meal
 ```
 
-Again, this can be done in the channel or via PM. You can also feed it a smaller "snack", or a much heartier "meal". Like their meatspace counterparts, pets have a tendency to die if not regularly fed.
+Again, this can be done in the channel or via PM. You can also feed it a smaller "snack", or a much heartier "feast". Like their meatspace counterparts, pets have a tendency to die if not regularly fed.
 
 You can see your pet's credentials and status with:
 

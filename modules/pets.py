@@ -183,9 +183,9 @@ class Pets(ModuleBase):
         hp = pet['hp']
         if hp > 0:
             message += " // HP: {0}".format(hp)
-        food = self.get_hunger(pet["food"])
-        if food:
-            message += " // Food: {0}".format(food)
+        food = pet["food"]
+        if food >= 0:
+            message += " // Food: {0}".format(int(food))
         return message
 
     def petstats(self, arg, nick, private):
@@ -207,26 +207,6 @@ class Pets(ModuleBase):
         for stat in stats:
             message += " // {0}: {1}".format(stat, stats[stat])
         return message
-
-    def get_hunger(self, food):
-        string = ""
-        if food < 0:
-            return None
-        elif food <= self.MAX_FOOD*0.05:
-            string = "DYING"
-        elif food <= self.MAX_FOOD*0.25:
-            string = "Starving"
-        elif food <= self.MAX_FOOD*0.50:
-            string = "Hungry"
-        elif food <= self.MAX_FOOD*0.70:
-            string = "Peckish"
-        elif food <= self.MAX_FOOD*0.80:
-            string = "Satisifed"
-        elif food <= self.MAX_FOOD*0.90:
-            string = "Full"
-        else:
-            string = "Bloated"
-        return string
 
     def evolve_pet(self, pet):
         # Egg hatch
@@ -324,8 +304,7 @@ class Pets(ModuleBase):
             if new_food > self.MAX_FOOD:
                 new_food = self.MAX_FOOD
             self.db.pets.update(pet, { "$set": { "food": new_food } })
-            status = self.get_hunger(new_food).lower()
-            return "You fed your pet. They are now {0}".format(status)
+            return "You fed your pet. Food amount is now {0}".format(int(new_food))
         else:
             return
 

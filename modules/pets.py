@@ -30,7 +30,7 @@ class Pets(ModuleBase):
     def process_pets(self):
         for pet in self.db.pets.find():
             owner = self.db.owners.find_one({"pets": ObjectId(pet["_id"])})
-            if self.check_owner_vacation(owner["_id"]):
+            if owner and self.check_owner_vacation(owner["_id"]):
                 continue
             update_fields = {}
             update_fields['growth'] = pet['growth'] + 1

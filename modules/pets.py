@@ -8,7 +8,7 @@ class Pets(ModuleBase):
 
 
     # Commands the module has.
-    commands = ["pethelp", "kill", "petinfo", "petstats", "newegg", "feed", "namepet", "defaultpet", "vacation"]
+    commands = ["pethelp", "pets", "kill", "petinfo", "petstats", "newegg", "feed", "namepet", "defaultpet", "vacation"]
 
     MAX_FOOD = 100
     TICK_EVERY = 60
@@ -131,6 +131,28 @@ class Pets(ModuleBase):
             
     def num_pets(self, owner):
         return len(self.core.get_owner(owner)['pets'])
+
+    def pets(self, arg, nick, private):
+        owner = self.db.owners.find_one({'_id': nick})
+        pets = owner['pets']
+        if len(pets) == 0:
+            return 'No pets found.'
+
+        message = ''
+        for i, pet in enumerate(pets):
+            message += '{0}: '.format(i+1)
+            pet = self.db.pets.find_one(pet)
+            if pet['level'] == 0:
+                message += 'Egg '
+            else:
+                face = faces.get_face(pet)
+                if face:
+                    message += '{0} '.format(face)
+                name = pet['name']
+                if name:
+                    message += '{0} '.format(name)
+
+        return message[:-1]
 
     def defaultpet(self, arg, nick, private):
         if not arg:

@@ -89,8 +89,11 @@ class Pets(ModuleBase):
     def kill_pet(self, pet, cause):
         if cause:
             pet['death'] = cause
+        owner = self.db.owners.find_one({"pets": ObjectId(pet["_id"])})
+        if owner:
+            pet['owner'] = owner
         self.db.graveyard.insert(pet)
-        self.db.pets.remove(pet)
+        self.db.pets.remove(pet["_id"])
 
     def remove_pet_from_owner(self, pet, owner):
         owner = self.db.owners.find_one(owner)

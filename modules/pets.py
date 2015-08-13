@@ -266,11 +266,11 @@ class Pets(ModuleBase):
             return "You have reached the maximum number of pets."
 
         print("Generating new egg for {0}".format(nick))
-        with open("attributes/colours") as f:
+        with open("attributes/colour") as f:
             colours = [line.rstrip() for line in f]
         colour = random.choice(colours)
 
-        with open("attributes/sounds") as f:
+        with open("attributes/sound") as f:
             sounds = [line.rstrip() for line in f]
         sound = random.choice(sounds)
 

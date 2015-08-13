@@ -4,7 +4,7 @@ import lib.faces as faces
 class Admin(ModuleBase):
 
     admins = []
-    commands = ["admin", "adminlogin"]
+    commands = ["admin", "adminlogin", "genalleles"]
 
     def __init__(self, core, db):
         super(Admin, self).__init__(core, db)
@@ -106,3 +106,17 @@ class Admin(ModuleBase):
 
         self.pet_controller.bot.load_module(args[0])
         return "Module {0} loaded.".format(args[0])
+
+    def genalleles(self, args, nick, private):
+        try:
+            gen_module = self.core.modules['genetics']
+        except KeyError:
+            return "Genetics module not loaded."
+        return gen_module.generate_attribute_alleles()
+        
+    def gengenes(self, args, nick, private):
+        try:
+            gen_module = self.core.modules['genetics']
+        except KeyError:
+            return "Genetics module not loaded."
+        return gen_module.generate_pet_genes()

@@ -5,7 +5,7 @@ def generate_face():
         ears = [line.rstrip() for line in f if len(line) <= 3]
     ear = choice(ears)
     
-    with open("attributes/mouths") as f:
+    with open("attributes/mouth") as f:
         mouths = [line.rstrip() for line in f if len(line) <= 2]
     mouth = choice(mouths)
 
@@ -41,3 +41,6 @@ def get_face(pet):
         face += ear[0]
 
     return face
+
+def get_face_attributes():
+    return ["mouth", "eyes", "ears"]

@@ -36,7 +36,6 @@ class Admin(ModuleBase):
             return
         if not args:
             return
-
         return getattr(self, args[0])(args[1:], nick, private)
 
     def stats(self, args, nick, private):
@@ -59,18 +58,20 @@ class Admin(ModuleBase):
             return "Pet stats rerolled."
 
     def kill(self, args, nick, private):
-        pets = loadDB("pets")
-        del pets[args[0]]
-        saveDB("pets", pets)
+        if len(args) < 2:
+            return "Usage: !admin kill <owner> <pet id>"
+        pet_module = self.core.modules['pets']
+        pet = pet_module.get_pet(args[1], args[0])
+        pet_module.remove_pet_from_owner(pet, args[0])
+        pet_module.kill_pet(pet, "Admin killed by {0}.".format(nick))
         return "Pet killed."
 
     def newegg(self, args, nick, private):
         if not args:
-            return
-        nick = args[0]
-        if self.pet_controller.has_pet(nick):
-            return
-        self.pet_controller.newegg(args, nick, private)
+            return "Usage: !admin newegg <owner>"
+        pet_module = self.core.modules['pets']
+        message = pet_module.newegg(args, args[0], private)
+        self.core.send_message(args[0], message, private)
         return "Egg created."
 
     def editattr(self, args, nick, private):
@@ -106,11 +107,8 @@ class Admin(ModuleBase):
         return "Face generated: {0}".format(faces.get_face({"face": face}))
 
     def moduleload(self, args, nick, private):
-        if not self.logged_in(nick):
-            return
         if not args:
-            return "Usage: !admin moduleload <module name>"
-
+            return "Usage: !admin moduleload <module>"
         self.core.load_module(args[0])
         return "Module {0} loaded.".format(args[0])
 

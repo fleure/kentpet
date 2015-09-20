@@ -12,10 +12,10 @@ class Pets(ModuleBase):
 
     MAX_FOOD = 100
     TICK_EVERY = 60
-    STAT_POOL = 15
+    STAT_POOL = 18
     STATS = ['strength', 'intelligence', 'constitution', 'dexterity',
-             'fabulous']
-    max_pets = 3
+             'fabulous', 'will']
+    MAX_PETS = 3
 
     def __init__(self, core, db):
         super(Pets, self).__init__(core, db)
@@ -193,18 +193,17 @@ class Pets(ModuleBase):
             return "No pet found."
         message = "Pet info"
 
-        face = faces.get_face(pet)
-        if face:
-            message += " // {0}".format(face)
-
-        name = pet['name']
-        if name != None:
-            message += " // {0}".format(name)
         level = pet['level']
         if level == 0:
             message += " // Egg"
-        else:
-            message += " // Level {0}".format(level)
+            return message
+        face = faces.get_face(pet)
+        if face:
+            message += " // {0}".format(face)
+        name = pet['name']
+        if name != None:
+            message += " // {0}".format(name)
+        message += " // Level {0}".format(level)
         hp = pet['hp']
         if hp > 0:
             message += " // HP: {0}".format(hp)
@@ -244,10 +243,6 @@ class Pets(ModuleBase):
             update_fields['happy'] = 50
             update_fields['food'] = self.MAX_FOOD*0.75
             update_fields['hp'] = 100
-            
-            update_fields['stats'] = self.roll_stats()
-
-            update_fields['face'] = faces.generate_face()
 
             self.messages[owner["_id"]] = "Your pet has hatched!"
         # Normal evolve
@@ -262,7 +257,7 @@ class Pets(ModuleBase):
     def newegg(self, arg, nick, private):
         if self.check_owner_vacation(nick):
             return "You cannot generate a new egg when on vacation."
-        if self.num_pets(nick) >= self.max_pets:
+        if self.num_pets(nick) >= self.MAX_PETS:
             return "You have reached the maximum number of pets."
 
         print("Generating new egg for {0}".format(nick))
@@ -274,30 +269,38 @@ class Pets(ModuleBase):
             sounds = [line.rstrip() for line in f]
         sound = random.choice(sounds)
 
-        pet = {}
+        pet = self.get_base_pet_stats()
         pet['colour'] = colour
         pet['sound'] = sound
-        pet['name'] = None
-        pet['growth'] = 0
-        pet['evolve'] = 60
-        pet['happy'] = 50
-        pet['food'] = -1
-        pet['metabolism'] = 40000
-        pet['fitness'] = 5
-        pet['level'] = 0
-        pet['hp'] = 100
+        pet['stats'] = self.roll_stats()
+        pet['face'] = faces.generate_face()
+        genetics_module = self.core.get_module('genetics')
+        if genetics_module:
+            pet['genes'] = genetics_module.generate_pet_genes(pet)
 
         record_id = self.db.pets.insert_one(pet).inserted_id
         self.db.owners.update({ "_id": nick }, { "$push": { "pets": record_id } })
         return "You have received an egg! Its colour is {0}. It will hatch in one hour.".format(pet['colour'])
 
+    def get_base_pet_stats(self):
+        data = {}
+        data['name'] = None
+        data['growth'] = 0
+        data['evolve'] = 60
+        data['happy'] = 50
+        data['food'] = -1
+        data['metabolism'] = 40000
+        data['fitness'] = 5
+        data['level'] = 0
+        data['hp'] = 100
+        return data
+
     def roll_stats(self):
-        pool = self.STAT_POOL
         stats = {}
 
         for stat in self.STATS:
             stats[stat] = 1
-        for x in range(pool):
+        for x in range(self.STAT_POOL):
             i = random.randint(0, len(self.STATS) - 1)
             stats[self.STATS[i]] += 1
         return stats
@@ -356,9 +359,9 @@ class Pets(ModuleBase):
 
     def pethelp(self, arg, nick, private):
         commands = []
-        for module, module_object in self.core.modules.iteritems():
+        for module, module_object in self.core.modules.items():
             commands.extend(module_object.commands)
 
-        commands = map(lambda x: "!" + x, commands)
+        commands = list(map(lambda x: "!" + x, commands))
 
         return "Commands: {0}".format(commands)

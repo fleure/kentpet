@@ -107,10 +107,9 @@ class Genetics(ModuleBase):
                                  True
             )
 
-            if nick in self.requests and self.requests[nick]:
-                self.requests[nick].append(other_owner)
-            else:
-                self.requests[nick] = [other_owner]
+            if nick not in self.requests:
+                self.requests[nick] = {}
+            self.requests[nick][other_owner] = [petA, petB]
 
             return "Request sent, awaiting response."
         else:
@@ -204,9 +203,10 @@ class Genetics(ModuleBase):
             return "That user has not made a request with you."
 
         if accept:
-            #thr = threading.Thread(target=self.breed_pets, args=[arg[0], nick])
-            #thr.deamon = True
-            #thr.start()
-            return "Request accepted... when it's implemented."
+            pets = self.requests[arg[0]][nick]
+            thr = threading.Thread(target=self.breed_pets, args=pets + [arg[0]])
+            thr.deamon = True
+            thr.start()
+            return "Request accepted."
         else:
             return "Request declined."

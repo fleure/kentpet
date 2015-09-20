@@ -4,6 +4,7 @@ import irc.schedule as schedule
 import json, datetime, threading, time
 import traceback
 import sys
+from imp import reload
 from pymongo import MongoClient
 
 class KentPetBot(ircbot.SingleServerIRCBot):
@@ -44,6 +45,14 @@ class KentPetBot(ircbot.SingleServerIRCBot):
         for cmd in self.modules[module].commands:
             self.commands[cmd] = module
         return self.modules[module]
+
+    # Only unloads module from kentpet's internal reference. Python doesn't seem to be
+    # able to unload modules.
+    def unload_module(self, module):
+        if module in self.modules:
+            self.commands = {k:self.commands[k] for k in self.commands if self.commands[k] != module}
+            del self.modules[module]
+
 
     def get_module(self, module):
         try:

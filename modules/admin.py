@@ -115,6 +115,14 @@ class Admin(ModuleBase):
             return "Module {0} not found.".format(args[0])
         return "Module {0} loaded.".format(args[0])
 
+    def moduleunload(self, args, nick, private):
+        if not args:
+            return "Usage: !admin moduleload <module>"
+        if args[0] in ["pet", "admin"]:
+            return "You cannot unload that module."
+        self.core.unload_module(args[0])
+        return "Module unloaded."
+
     def genalleles(self, args, nick, private):
         try:
             gen_module = self.core.modules['genetics']

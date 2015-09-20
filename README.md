@@ -82,13 +82,13 @@ Use !pethelp for a full list of all module commands.
 
 ##Admin
 
-Kentpet comes with an admin module that lets you tweak the game or pets, or be a power hungry monster. You will have to open a mongo shell and add users to the "admins" collection manually, like so:
+Kentpet comes with an admin module that lets you tweak the game or pets, or be a power hungry monster. To setup your admin user, PM kentpet with the following:
 
 ```
-db.admins.insert({"name": "password"})
+!adminsetup <password>
 ```
 
-Where "name" is the case-sensitive name of the admin's ircname, and the password is the one they will use to log in with. To log in to the admin module, PM the bot the following:
+Where password is the passphrase you will use to log in with. To log in to the admin module, PM the bot the following:
 
 ```
 !adminlogin <password>

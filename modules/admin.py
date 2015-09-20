@@ -109,7 +109,10 @@ class Admin(ModuleBase):
     def moduleload(self, args, nick, private):
         if not args:
             return "Usage: !admin moduleload <module>"
-        self.core.load_module(args[0])
+        try:
+            self.core.load_module(args[0])
+        except ImportError:
+            return "Module {0} not found.".format(args[0])
         return "Module {0} loaded.".format(args[0])
 
     def genalleles(self, args, nick, private):

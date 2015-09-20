@@ -6,7 +6,7 @@ import random
 class Admin(ModuleBase):
 
     admins = []
-    commands = ["admin", "adminlogin"]
+    commands = ["admin", "adminlogin", "adminsetup"]
 
     def __init__(self, core, db):
         super(Admin, self).__init__(core, db)
@@ -30,6 +30,16 @@ class Admin(ModuleBase):
     def remove_admin(self, name):
         if name in self.admins:
             self.admins.remove(name)
+
+    def adminsetup(self, args, nick, private):
+        if self.db.admins.count() > 0:
+            return "Admin is already setup."
+        if not private:
+            return "This command only works in private message."
+        if not args:
+            return "Usage: !adminsetup <password>"
+        self.db.admins.insert({'_id': nick, 'password': args[0]})
+        return "Admin has now been setup."
 
     def admin(self, args, nick, private):
         if not self.logged_in(nick):

@@ -182,7 +182,11 @@ class Pets(ModuleBase):
                 pass
 
         if not arg:
-            return self.get_default_pet(nick)
+            pet = self.get_default_pet(nick)
+            if not pet:
+                return self.get_pet(1, nick)
+            else:
+                return pet
         else:
             return self.get_pet(arg, nick)
 

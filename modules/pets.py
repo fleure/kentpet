@@ -180,7 +180,10 @@ class Pets(ModuleBase):
                 arg.remove(nick)
             except IndexError:
                 pass
+        return self.process_self_pet_query(arg, nick)
 
+
+    def process_self_pet_query(self, arg, nick):
         if not arg:
             pet = self.get_default_pet(nick)
             if not pet:
@@ -189,6 +192,7 @@ class Pets(ModuleBase):
                 return pet
         else:
             return self.get_pet(arg, nick)
+        
 
     def petinfo(self, arg, nick, private):
 
@@ -312,10 +316,12 @@ class Pets(ModuleBase):
     def feed(self, arg, nick, private):
         if self.check_owner_vacation(nick):
             return "You cannot feed your pet when on vacation."
-        pet = self.process_pet_query(arg[:-1], nick)
+        if len(arg) == 1:
+            pet = self.process_self_pet_query(None, nick)
+        else:
+            pet = self.process_self_pet_query(arg[:-1], nick)
         if not pet:
             return "No pet found."
-        message = "Pet info"
         if arg[-1] not in ["snack", "meal", "feast"]:
             return "Usage: !feed <number/name> snack|meal|feast"
         if pet['level'] == 0:
@@ -342,15 +348,20 @@ class Pets(ModuleBase):
 
 
     def namepet(self, arg, nick, private):
-        if len(arg) < 2:
+        if not arg:
             return "Usage: !namepet <number> <name>"
-        pet = self.get_pet(arg[0], nick)
+        try:
+            pet_id = int(arg[0])
+            pet = self.process_self_pet_query(pet_id, nick)
+            arg = arg[1:]
+        except ValueError:
+            pet = self.process_self_pet_query(None, nick)
         if not pet:
             return "No pet found."
         if pet['name']:
             return "You cannot rename your pet."
         valid_name = False
-        name = " ".join(arg[1:])
+        name = " ".join(arg)
         try:
             name = float(name)
         except ValueError:

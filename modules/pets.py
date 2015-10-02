@@ -156,14 +156,18 @@ class Pets(ModuleBase):
 
     def defaultpet(self, arg, nick, private):
         if not arg:
-            return "Usage: !defaultpet <number/name>"
+            return "Usage: !defaultpet <number/name>|none"
 
-        pet = self.get_pet(arg, nick)
-        if not pet:
-            return "No pet found."
+        if arg.lower() != "none":
+            pet = self.get_pet(arg, nick)
+            if not pet:
+                return "No pet found."
 
-        self.db.owners.update({"_id": nick}, { "$set": { "default": pet["_id"] } })
-        return "Default pet set."
+            self.db.owners.update({"_id": nick}, { "$set": { "default": pet["_id"] } })
+            return "Default pet set."
+        else:
+            self.db.owners.update({"_id": nick}, { "$set": { "default": None } })
+            return "Default pet cleared."
 
     def get_default_pet(self, owner):
         try:

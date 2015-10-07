@@ -80,8 +80,8 @@ class Pets(ModuleBase):
         if not pet:
             return "No pet found."
         name = pet['name']
-        self.remove_pet_from_owner(pet, nick)
         self.kill_pet(pet, "Killed by {0}.".format(nick))
+        self.remove_pet_from_owner(pet, nick)
         if not name:
             name = "your pet"
         return "You murdered {0}. You monster.".format(name)
@@ -96,10 +96,13 @@ class Pets(ModuleBase):
         self.db.pets.remove(pet["_id"])
 
     def remove_pet_from_owner(self, pet, owner):
-        owner = self.db.owners.find_one(owner)
-        if "default" in owner and owner["default"] == pet["_id"]:
-            self.db.owners.update(owner, { "$set": { "default": None } })
-        self.db.owners.update(owner, { "$pull": { "pets": ObjectId(pet["_id"]) } })
+        owner_record = self.db.owners.find_one(owner)
+        pets = owner_record['pets']
+        pets.remove(pet['_id'])
+        changes = { 'pets': pets }
+        if 'default' in owner_record and owner_record['default'] == pet['_id']:
+            changes['default'] = None
+        self.db.owners.update({'_id': owner}, { '$set': changes })
 
     def decay_food(self, food, metabolism):
         food -= (random.random()*food)/(metabolism/self.TICK_EVERY)
@@ -158,7 +161,7 @@ class Pets(ModuleBase):
         if not arg:
             return "Usage: !defaultpet <number/name>|none"
 
-        if arg.lower() != "none":
+        if arg[0].lower() != "none":
             pet = self.get_pet(arg, nick)
             if not pet:
                 return "No pet found."

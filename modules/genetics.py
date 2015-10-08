@@ -30,16 +30,11 @@ class Genetics(ModuleBase):
 
     def gather_attributes(self):
         attribute_files = self.get_attribute_files()
-        face_attributes = faces.get_face_attributes()
         attributes = {}
-        attributes["face"] = {}
         for attribute in attribute_files:
             data = open("attributes/{0}".format(attribute)).readlines()
             data = [line.rstrip() for line in data]
-            if attribute in face_attributes:
-                attributes["face"][attribute] = data
-            else:
-                attributes[attribute] = data
+            attributes[attribute] = data
         return attributes
 
     def get_attribute_index(self, attribute, element):
@@ -122,9 +117,7 @@ class Genetics(ModuleBase):
         stats = random.sample(stats_available, int(len(stats_available)/2))
         new_pet = pet_module.get_base_pet_stats()
         new_pet['stats'] = {}
-        new_pet['face'] = {}
         new_pet['genes'] = {}
-        new_pet['genes']['face'] = {}
         new_pet['parents'] = [petA['_id'], petB['_id']]
         new_stats = [x for x in stats_available if x not in stats]
         parents = [petA, petB]
@@ -143,22 +136,14 @@ class Genetics(ModuleBase):
 
         # Inherit physical features from parents
         attributes = self.get_attribute_files()
-        face_attributes = faces.get_face_attributes()
         for attribute in attributes:
             choices = []
             visible = random.getrandbits(1)
-            if attribute not in face_attributes:
-                for parent in parents:
-                    if visible:
-                        choices.append(parent[attribute])
-                    else:
-                        choices.append(parent['genes'][attribute])
-            else:
-                for parent in parents:
-                    if visible:
-                        choices.append(parent['face'][attribute])
-                    else:
-                        choices.append(parent['genes']['face'][attribute])
+            for parent in parents:
+                if visible:
+                    choices.append(parent[attribute])
+                else:
+                    choices.append(parent['genes'][attribute])
             choice_alleles = [self.get_attribute_allele(attribute, element) for element in choices]
             total = sum(choice_alleles)
             if total == 0:
@@ -177,12 +162,8 @@ class Genetics(ModuleBase):
                 visible = choices[0]
                 carry = choices[1]
             
-            if attribute not in face_attributes:
-                new_pet[attribute] = visible
-                new_pet['genes'][attribute] = carry
-            else:
-                new_pet['face'][attribute] = visible
-                new_pet['genes']['face'][attribute] = carry
+            new_pet[attribute] = visible
+            new_pet['genes'][attribute] = carry
         
         record_id = self.db.pets.insert_one(new_pet).inserted_id
         self.db.owners.update({ "_id": owner }, { "$push": { "pets": record_id } })

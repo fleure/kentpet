@@ -112,9 +112,9 @@ class Admin(ModuleBase):
             return "No pet found."
 
         face = faces.generate_face()
-        self.db.pets.update(pet, { "$set": { "face": face } })
+        self.db.pets.update(pet, { "$set": face })
 
-        return "Face generated: {0}".format(faces.get_face({"face": face}))
+        return "Face generated: {0}".format(faces.get_face(face))
 
     def moduleload(self, args, nick, private):
         if not args:

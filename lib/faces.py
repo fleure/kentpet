@@ -21,14 +21,12 @@ def generate_face():
     return face
 
 def get_face(pet):
-    if "face" not in pet:
+    try:
+        ear = pet['ears']
+        eye = pet['eyes']
+        mouth = pet['mouth']
+    except KeyError:
         return
-    
-    face_data = pet['face']
-
-    ear = face_data['ears']
-    eye = face_data['eyes']
-    mouth = face_data['mouth']
     face = ear[0] + eye[0] + mouth
     if len(eye) > 1:
         face += eye[1]

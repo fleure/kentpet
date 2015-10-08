@@ -288,7 +288,7 @@ class Pets(ModuleBase):
         pet['colour'] = colour
         pet['sound'] = sound
         pet['stats'] = self.roll_stats()
-        pet['face'] = faces.generate_face()
+        pet.update(faces.generate_face())
         genetics_module = self.core.get_module('genetics')
         if genetics_module:
             pet['genes'] = genetics_module.generate_pet_genes(pet)

@@ -386,4 +386,4 @@ class Pets(ModuleBase):
 
         commands = list(map(lambda x: "!" + x, commands))
 
-        return "Commands: {0}".format(commands)
+        return "Commands: {0}".format(", ".join(commands))

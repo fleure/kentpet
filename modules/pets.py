@@ -50,8 +50,8 @@ class Pets(ModuleBase):
                     getcontext().prec = 4
                     update_fields['hp'] = float(Decimal(pet['hp']) - Decimal(0.05))
                     if(update_fields['hp'] <= 0):
-                        self.remove_pet_from_owner(pet, owner)
                         self.kill_pet(pet, "Starved to death")
+                        self.remove_pet_from_owner(pet, owner['_id'])
                         self.messages[owner["_id"]] = "Your pet has died!"
                         return
             self.db.pets.update(pet, { "$set": update_fields } )

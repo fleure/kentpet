@@ -323,33 +323,19 @@ class Pets(ModuleBase):
     def feed(self, arg, nick, private):
         if self.check_owner_vacation(nick):
             return "You cannot feed your pet when on vacation."
-        if len(arg) == 1:
+        if len(arg) == 0:
             pet = self.process_self_pet_query(None, nick)
         else:
-            pet = self.process_self_pet_query(arg[:-1], nick)
+            pet = self.process_self_pet_query(arg[-1], nick)
         if not pet:
             return "No pet found."
-        if arg[-1] not in ["snack", "meal", "feast"]:
-            return "Usage: !feed <number/name> snack|meal|feast"
         if pet['level'] == 0:
             return "You cannot feed eggs."
 
-        amount = 10.0
-        if arg:
-            amount_string = arg[-1].lower()
-            if amount_string == "meal":
-                amount = 25.0
-            elif amount_string == "feast":
-                amount = 50.0
-
-        new_food = pet['food']
-        amount /= 100
-        if new_food < self.MAX_FOOD:
-            new_food += self.MAX_FOOD*amount
-            if new_food > self.MAX_FOOD:
-                new_food = self.MAX_FOOD
-            self.db.pets.update(pet, { "$set": { "food": new_food } })
-            return "You fed your pet. Food amount is now {0}".format(int(new_food))
+        amount = self.MAX_FOOD
+        if pet['food'] < self.MAX_FOOD:
+            self.db.pets.update(pet, { "$set": { "food": amount } })
+            return "You fed your pet."
         else:
             return
 
